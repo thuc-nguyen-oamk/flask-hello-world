@@ -23,5 +23,7 @@ It is designed to be **easily extendable** — adding a new translation model re
 
 ### 1️⃣ Clone this repository
 ```bash
-git clone https://github.com/your-username/chinese-vietnamese-translator.git
-cd chinese-vietnamese-translator
+git clone https://github.com/thuc-nguyen-oamk/flask-hello-world.git
+cd flask-hello-world
+pip install -r requirements.txt
+python app.py
