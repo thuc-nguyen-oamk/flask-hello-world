@@ -1,8 +1,3 @@
-Here’s a clean and professional **`README.md`** for your multi-model Chinese → Vietnamese translator app:
-
----
-
-````markdown
 # 🌍 Chinese to Vietnamese Multi-Model Translator
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://flask-hello-world.streamlit.app/)
@@ -127,8 +122,6 @@ If you add a new model that works well, consider submitting it so others can ben
 
 **Author:** Your Name
 🔗 **Live App:** [https://flask-hello-world.streamlit.app/](https://flask-hello-world.streamlit.app/)
-
-```
 
 ---
 
