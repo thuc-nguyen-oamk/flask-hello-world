@@ -1,15 +1,11 @@
-# app.py
-
 import os
 import torch
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-from threading import Thread
-from flask import Flask, request, jsonify
+from fastapi import FastAPI
+from fastapi.middleware.wsgi import WSGIMiddleware
 
-# -----------------------------
-# Translator Class (same as before)
-# -----------------------------
+# Translator class remains the same
 class Translator:
     def __init__(self, hf_model_name="chi-vi/hirashiba-mt-tiny-zh-vi"):
         self.HF_MODEL_NAME = hf_model_name
@@ -59,18 +55,15 @@ class Translator:
         )
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-# -----------------------------
-# Load Translator Once
-# -----------------------------
+
+# Load translator once
 @st.cache_resource
 def load_translator():
     return Translator()
 
 translator = load_translator()
 
-# -----------------------------
 # Streamlit UI
-# -----------------------------
 st.title("🌍 Chinese to Vietnamese Translator")
 chinese_text = st.text_input("Enter Chinese text to translate:", "你好，世界")
 
@@ -82,25 +75,17 @@ if st.button("Translate"):
     else:
         st.warning("Please enter some text to translate.")
 
-# -----------------------------
-# Flask API in Background Thread
-# -----------------------------
-flask_app = Flask(__name__)
 
-@flask_app.route('/translate', methods=['GET'])
-def api_translate():
-    text = request.args.get("text", "").strip()
-    if not text:
-        return jsonify({"error": "No text provided"}), 400
+# FastAPI for REST API
+app = FastAPI()
+
+@app.get("/translate")
+def api_translate(text: str):
     try:
         result = translator.translate(text)
-        return jsonify({"input": text, "translation": result})
+        return {"input": text, "translation": result}
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return {"error": str(e)}
 
-def run_flask():
-    port = int(os.environ.get("FLASK_PORT", 8000))
-    flask_app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
-
-# Start Flask in background
-Thread(target=run_flask, daemon=True).start()
+# Mount Streamlit app under FastAPI
+app.mount("/", WSGIMiddleware(st.server.server))
