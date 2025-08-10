@@ -1,6 +1,12 @@
+# online app.py
+
 import os
 import torch
+from flask import Flask, request, jsonify
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+# Initialize Flask app
+app = Flask(__name__)
 
 class Translator:
     def __init__(self, hf_model_name="chi-vi/hirashiba-mt-tiny-zh-vi"):
@@ -53,9 +59,30 @@ class Translator:
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 
-# Example usage
-if __name__ == "__main__":
-    translator = Translator()
-    sample = r'''[Multi SUB] (全集)《似此星辰非昨夜》六千条消息她只回三十八条，五年替身婚姻到期，我带着呼吸机去了西北科研基地 #都市 #逆袭 #虐恋 #爱情 #完整版'''
-    print("AI Translation:")
-    print(translator.translate(sample))
+# Initialize translator once on startup
+translator = Translator()
+
+@app.route('/')
+def hello():
+    return "🌍 Hello, World! Chinese-Vietnamese AI Translator is running here."
+
+@app.route('/translate', methods=['POST'])
+def translate_text():
+    data = request.get_json()
+    chinese_text = data.get("text", "").strip()
+
+    if not chinese_text:
+        return jsonify({"error": "No text provided."}), 400
+
+    try:
+        translated = translator.translate(chinese_text)
+        return jsonify({
+            "input": chinese_text,
+            "translation": translated
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
