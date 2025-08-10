@@ -4,6 +4,5 @@ transformers
 torch
 sentencepiece
 sacremoses
-streamlit
 fastapi
 uvicorn
