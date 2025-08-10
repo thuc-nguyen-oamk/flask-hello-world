@@ -3,3 +3,4 @@ Gunicorn
 jieba
 transformers
 torch
+sentencepiece
