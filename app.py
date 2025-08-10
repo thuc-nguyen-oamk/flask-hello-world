@@ -1,10 +1,7 @@
 import os
 import torch
-from flask import Flask, request, jsonify
+import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
-# Initialize Flask app
-app = Flask(__name__)
 
 class Translator:
     def __init__(self, hf_model_name="chi-vi/hirashiba-mt-tiny-zh-vi"):
@@ -57,37 +54,23 @@ class Translator:
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 
-# Initialize translator once on startup
-translator = Translator()
+# Initialize translator once
+@st.cache_resource
+def load_translator():
+    return Translator()
 
-@app.route('/')
-def hello():
-    # Test translation
-    # test_text = "你好，世界"
-    # translated = translator.translate(test_text)
-    
-    welcome_msg = "🌍 Hello, World! Chinese-Vietnamese AI Translator is running here.\n"
-    # test_result = f"🔍 Test translation: '{test_text}' → '{translated}'"
-    
-    return welcome_msg  # + test_result
+translator = load_translator()
 
-@app.route('/translate', methods=['GET'])
-def translate_text():
-    chinese_text = request.args.get("text", "").strip()
+# Streamlit UI
+st.title("🌍 Chinese to Vietnamese Translator")
+st.markdown("Powered by `chi-vi/hirashiba-mt-tiny-zh-vi` model")
 
-    if not chinese_text:
-        return jsonify({"error": "No text provided. Use ?text=..."}), 400
+chinese_text = st.text_input("Enter Chinese text to translate:", "你好，世界")
 
-    try:
-        translated = translator.translate(chinese_text)
-        return jsonify({
-            "input": chinese_text,
-            "translation": translated
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5987)) # Use Render's port or default to 5000 locally
-    app.run(host='0.0.0.0', port=port, debug=False) # debug=False for production
+if st.button("Translate"):
+    if chinese_text.strip():
+        with st.spinner("Translating..."):
+            translated = translator.translate(chinese_text)
+        st.success(f"**Translation:** {translated}")
+    else:
+        st.warning("Please enter some text to translate.")
