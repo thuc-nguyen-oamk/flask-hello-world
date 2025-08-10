@@ -1,0 +1,2 @@
+[server]
+folderWatchBlacklist = [".git", "local_translator_models", "__pycache__", "venv", "node_modules"]
