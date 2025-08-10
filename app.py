@@ -4,7 +4,8 @@ from translator import TranslatorManager
 # List of Hugging Face models you want to use
 MODEL_NAMES = [
     "chi-vi/hirashiba-mt-tiny-zh-vi",
-    "Helsinki-NLP/opus-mt-zh-vi"
+    "Helsinki-NLP/opus-mt-zh-vi",
+    "arcee-ai/Arcee-VyLinh"  # Newly added model
 ]
 
 @st.cache_resource
