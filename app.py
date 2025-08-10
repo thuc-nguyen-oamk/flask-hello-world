@@ -5,6 +5,7 @@ from translator import TranslatorManager
 MODEL_NAMES = [
     "chi-vi/hirashiba-mt-tiny-zh-vi",
     "Helsinki-NLP/opus-mt-zh-vi",
+    "arcee-ai/Arcee-VyLinh"  # Newly added causal LM
 ]
 
 @st.cache_resource
@@ -13,14 +14,15 @@ def load_translators():
 
 translators = load_translators()
 
-st.title("🌍 Chinese to Vietnamese Multi-Model Translator")
-chinese_text = st.text_input("Enter Chinese text to translate:", "你好，世界")
+st.title("🌍 Dịch tiếng Trung sang tiếng Việt (Nhiều mô hình)")
+chinese_text = st.text_input("Nhập câu tiếng Trung cần dịch:", "你好，世界")
 
-if st.button("Translate"):
+if st.button("Dịch"):
     if chinese_text.strip():
-        with st.spinner("Translating with all models..."):
+        with st.spinner("Đang dịch với tất cả mô hình..."):
             results = translators.translate_all(chinese_text)
-        for model_name, translation in results.items():
-            st.markdown(f"**{model_name}:** {translation}")
+        for idx, (model_name, translation) in enumerate(results.items(), start=1):
+            # Show "Bản dịch 1", "Bản dịch 2", etc.
+            st.markdown(f"**Bản dịch {idx}:** {translation}  \n<sub><i>{model_name}</i></sub>", unsafe_allow_html=True)
     else:
-        st.warning("Please enter some text to translate.")
+        st.warning("Vui lòng nhập nội dung cần dịch.")
