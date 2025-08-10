@@ -102,7 +102,7 @@ Output:
 
 ```
 chi-vi/hirashiba-mt-tiny-zh-vi: Chào ngươi, thế giới
-Helsinki-NLP/opus-mt-zh-vi: Chào thế giới
+Helsinki-NLP/opus-mt-zh-vi: Xin chào, thế giới
 ```
 
 ---
