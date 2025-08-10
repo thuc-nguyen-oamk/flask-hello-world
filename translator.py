@@ -1,43 +1,37 @@
-# translator.py
 import os
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 class Translator:
-    def __init__(self, hf_model_name="chi-vi/hirashiba-mt-tiny-zh-vi"):
+    def __init__(self, hf_model_name):
         self.HF_MODEL_NAME = hf_model_name
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.LOCAL_MODEL_DIR = os.path.join(self.script_dir, "local_translator_models", self.HF_MODEL_NAME.replace('/', '_'))
+        self.LOCAL_MODEL_DIR = os.path.join(
+            self.script_dir,
+            "local_translator_models",
+            self.HF_MODEL_NAME.replace('/', '_')
+        )
         self.DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        print(f'LOCAL_MODEL_DIR = {self.LOCAL_MODEL_DIR}')
         os.makedirs(self.LOCAL_MODEL_DIR, exist_ok=True)
-
         self.ensure_model_local()
-        self.tokenizer, self.model = self.load_model(self.HF_MODEL_NAME, local_dir=self.LOCAL_MODEL_DIR)
+        self.tokenizer, self.model = self.load_model(self.LOCAL_MODEL_DIR)
 
     def ensure_model_local(self):
         if os.path.exists(self.LOCAL_MODEL_DIR) and os.listdir(self.LOCAL_MODEL_DIR):
             try:
-                print("📂 Local model directory found. Attempting to load...")
                 AutoTokenizer.from_pretrained(self.LOCAL_MODEL_DIR)
-                print("✅ Local model loaded successfully — using offline mode.")
                 return
-            except Exception as e:
-                print(f"⚠️ Local model load failed: {e}")
+            except Exception:
                 import shutil
                 shutil.rmtree(self.LOCAL_MODEL_DIR, ignore_errors=True)
 
-        print("⬇ Downloading model from Hugging Face...")
         tokenizer = AutoTokenizer.from_pretrained(self.HF_MODEL_NAME)
         model = AutoModelForSeq2SeqLM.from_pretrained(self.HF_MODEL_NAME)
-        os.makedirs(self.LOCAL_MODEL_DIR, exist_ok=True)
         tokenizer.save_pretrained(self.LOCAL_MODEL_DIR)
         model.save_pretrained(self.LOCAL_MODEL_DIR)
-        print("✅ Model downloaded and saved locally.")
 
-    def load_model(self, model_name, local_dir=None):
-        model_path = local_dir or model_name
+    def load_model(self, model_path):
         tokenizer = AutoTokenizer.from_pretrained(model_path)
         model = AutoModelForSeq2SeqLM.from_pretrained(model_path).to(self.DEVICE)
         return tokenizer, model
@@ -51,3 +45,17 @@ class Translator:
             early_stopping=True
         )
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+
+class TranslatorManager:
+    def __init__(self, model_names):
+        self.translators = {name: Translator(name) for name in model_names}
+
+    def translate_all(self, text):
+        results = {}
+        for name, translator in self.translators.items():
+            try:
+                results[name] = translator.translate(text)
+            except Exception as e:
+                results[name] = f"Error: {e}"
+        return results
