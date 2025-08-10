@@ -5,6 +5,10 @@ import torch
 from flask import Flask, request, jsonify
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
+# Set environment variables
+os.environ['HF_HUB_CACHE'] = r'E:\huggingface_cache'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
 # Initialize Flask app
 app = Flask(__name__)
 
@@ -64,15 +68,21 @@ translator = Translator()
 
 @app.route('/')
 def hello():
-    return "🌍 Hello, World! Chinese-Vietnamese AI Translator is running here."
+    # Test translation
+    test_text = "你好，世界"
+    translated = translator.translate(test_text)
+    
+    welcome_msg = "🌍 Hello, World! Chinese-Vietnamese AI Translator is running here.\n"
+    test_result = f"🔍 Test translation: '{test_text}' → '{translated}'"
+    
+    return welcome_msg + test_result
 
-@app.route('/translate', methods=['POST'])
+@app.route('/translate', methods=['GET'])
 def translate_text():
-    data = request.get_json()
-    chinese_text = data.get("text", "").strip()
+    chinese_text = request.args.get("text", "").strip()
 
     if not chinese_text:
-        return jsonify({"error": "No text provided."}), 400
+        return jsonify({"error": "No text provided. Use ?text=..."}), 400
 
     try:
         translated = translator.translate(chinese_text)
