@@ -60,8 +60,8 @@ class Translator:
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 
-# Initialize translator once on startup
-translator = Translator()
+# This one will be initialized on first use
+translator = None
 
 @app.route('/')
 def hello():
@@ -76,6 +76,9 @@ def hello():
 
 @app.route('/translate', methods=['GET'])
 def translate_text():
+    global translator
+    translator = Translator()
+    
     chinese_text = request.args.get("text", "").strip()
 
     if not chinese_text:
@@ -91,5 +94,6 @@ def translate_text():
         return jsonify({"error": str(e)}), 500
 
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000)) # Use Render's port or default to 5000 locally
+    app.run(host='0.0.0.0', port=port, debug=False) # debug=False for production
