@@ -3,18 +3,15 @@ import torch
 from flask import Flask, request, jsonify
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-# Set environment variables
-os.environ['HF_HUB_CACHE'] = '/tmp/huggingface_cache'  # Render-friendly cache dir
-
 # Initialize Flask app
 app = Flask(__name__)
 
 class Translator:
-    def __init__(self, hf_model_name="Helsinki-NLP/opus-mt-zh-vi"):  # Lighter model
+    def __init__(self, hf_model_name="chi-vi/hirashiba-mt-tiny-zh-vi"):
         self.HF_MODEL_NAME = hf_model_name
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         self.LOCAL_MODEL_DIR = os.path.join(self.script_dir, "local_translator_models", self.HF_MODEL_NAME.replace('/', '_'))
-        self.DEVICE = torch.device("cpu")  # Force CPU for Render
+        self.DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         print(f'LOCAL_MODEL_DIR = {self.LOCAL_MODEL_DIR}')
         os.makedirs(self.LOCAL_MODEL_DIR, exist_ok=True)
@@ -54,14 +51,14 @@ class Translator:
         outputs = self.model.generate(
             **inputs,
             max_length=max_length,
-            num_beams=2,  # Reduce beams to save memory
+            num_beams=4,
             early_stopping=True
         )
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 
-# This one will be initialized on first use
-translator = None
+# Initialize translator once on startup
+translator = Translator()
 
 @app.route('/')
 def hello():
@@ -72,13 +69,10 @@ def hello():
     welcome_msg = "🌍 Hello, World! Chinese-Vietnamese AI Translator is running here.\n"
     # test_result = f"🔍 Test translation: '{test_text}' → '{translated}'"
     
-    return welcome_msg   # + test_result
+    return welcome_msg  # + test_result
 
 @app.route('/translate', methods=['GET'])
 def translate_text():
-    global translator
-    translator = Translator()
-    
     chinese_text = request.args.get("text", "").strip()
 
     if not chinese_text:
