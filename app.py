@@ -23,6 +23,6 @@ if st.button("Dịch"):
             results = translators.translate_all(chinese_text)
         for idx, (model_name, translation) in enumerate(results.items(), start=1):
             # Show "Bản dịch 1", "Bản dịch 2", etc.
-            st.markdown(f"**Bản dịch {idx}:** {translation}  \n<sub><i>{model_name}</i></sub>", unsafe_allow_html=True)
+            st.markdown(f"**Bản dịch {idx}:** {translation}  \n<hr/>", unsafe_allow_html=True)
     else:
         st.warning("Vui lòng nhập nội dung cần dịch.")
