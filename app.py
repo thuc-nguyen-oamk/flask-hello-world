@@ -1,8 +1,15 @@
+# app.py
+
 import os
 import torch
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from threading import Thread
+from flask import Flask, request, jsonify
 
+# -----------------------------
+# Translator Class (same as before)
+# -----------------------------
 class Translator:
     def __init__(self, hf_model_name="chi-vi/hirashiba-mt-tiny-zh-vi"):
         self.HF_MODEL_NAME = hf_model_name
@@ -17,7 +24,6 @@ class Translator:
         self.tokenizer, self.model = self.load_model(self.HF_MODEL_NAME, local_dir=self.LOCAL_MODEL_DIR)
 
     def ensure_model_local(self):
-        """Download model from HF if not present locally."""
         if os.path.exists(self.LOCAL_MODEL_DIR) and os.listdir(self.LOCAL_MODEL_DIR):
             try:
                 print("📂 Local model directory found. Attempting to load...")
@@ -53,18 +59,19 @@ class Translator:
         )
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-
-# Initialize translator once
+# -----------------------------
+# Load Translator Once
+# -----------------------------
 @st.cache_resource
 def load_translator():
     return Translator()
 
 translator = load_translator()
 
+# -----------------------------
 # Streamlit UI
+# -----------------------------
 st.title("🌍 Chinese to Vietnamese Translator")
-st.markdown("Powered by `chi-vi/hirashiba-mt-tiny-zh-vi` model")
-
 chinese_text = st.text_input("Enter Chinese text to translate:", "你好，世界")
 
 if st.button("Translate"):
@@ -74,3 +81,26 @@ if st.button("Translate"):
         st.success(f"**Translation:** {translated}")
     else:
         st.warning("Please enter some text to translate.")
+
+# -----------------------------
+# Flask API in Background Thread
+# -----------------------------
+flask_app = Flask(__name__)
+
+@flask_app.route('/translate', methods=['GET'])
+def api_translate():
+    text = request.args.get("text", "").strip()
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+    try:
+        result = translator.translate(text)
+        return jsonify({"input": text, "translation": result})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def run_flask():
+    port = int(os.environ.get("FLASK_PORT", 8000))
+    flask_app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
+
+# Start Flask in background
+Thread(target=run_flask, daemon=True).start()
