@@ -4,3 +4,4 @@ jieba
 transformers
 torch
 sentencepiece
+sacremoses
