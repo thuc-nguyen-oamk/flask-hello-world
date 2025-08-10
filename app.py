@@ -5,7 +5,6 @@ from translator import TranslatorManager
 MODEL_NAMES = [
     "chi-vi/hirashiba-mt-tiny-zh-vi",
     "Helsinki-NLP/opus-mt-zh-vi",
-    "arcee-ai/Arcee-VyLinh"  # Newly added model
 ]
 
 @st.cache_resource
