@@ -120,10 +120,8 @@ If you add a new model that works well, consider submitting it so others can ben
 
 ---
 
-**Author:** Your Name
+**Author:** Thuc Nguyen
 🔗 **Live App:** [https://flask-hello-world.streamlit.app/](https://flask-hello-world.streamlit.app/)
 
 ---
 
-Do you want me to also **add screenshots and a "How it works" diagram** so the README looks even more professional for GitHub? That would make it stand out.
-```
