@@ -53,10 +53,11 @@ if st.button("Translate"):
         
         # Create combined translation text
         vietnamese_translations = list(results.values())
+        newline = "\n"  # Workaround for f-string backslash limitation
         combined_text = f"""{chinese_text}
 {english_result}
 {hanviet_capitalized}
-{"\n".join(vietnamese_translations[:2])}"""
+{newline.join(vietnamese_translations[:2])}"""
         
         # Display combined translation in a text area for easy copying
         st.text_area("Combined Translation (for copying):", combined_text, height=150)
