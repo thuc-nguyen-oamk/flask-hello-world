@@ -59,7 +59,8 @@ if st.button("Translate"):
 {hanviet_capitalized}
 {newline.join(vietnamese_translations[:2])}"""
         
-        # Display combined translation in a text area for easy copying
-        st.text_area("Combined Translation (for copying):", combined_text, height=150)
+        # Display combined translation in a markdown code block
+        st.markdown("### Combined Translation:")
+        st.code(combined_text, language=None)
     else:
         st.warning("Please enter some text to translate.")
