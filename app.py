@@ -51,50 +51,16 @@ if st.button("Translate"):
         # Display Han-Viet transliteration
         st.markdown(f"**Han-Viet Transliteration:** {hanviet_result}")
         
-        # Create combined translation text (strip any leading/trailing whitespace)
-        chinese_text_clean = chinese_text.strip()
+        # Create combined translation text
         vietnamese_translations = list(results.values())
         newline = "\n"  # Workaround for f-string backslash limitation
-        combined_text = f"""{chinese_text_clean}
+        combined_text = f"""{chinese_text}
 {english_result}
 {hanviet_capitalized}
 {newline.join(vietnamese_translations[:2])}"""
         
-        # Display combined translation with copy button
-        col1, col2 = st.columns([4, 1])
-        with col1:
-            st.markdown("### Combined Translation:")
-        with col2:
-            st.code(combined_text)  # Hidden code block for copying
-            # Create escaped version for JavaScript
-            js_escaped_text = combined_text.replace('`', '\\`').replace('$', '\\$')
-            button_html = f"""
-            <div style="position: relative; top: -40px; text-align: right;">
-                <button title="Copy to clipboard" onclick="navigator.clipboard.writeText(`{js_escaped_text}`)" style="
-                    background: none;
-                    border: none;
-                    cursor: pointer;
-                    font-size: 18px;
-                ">📋</button>
-            </div>
-            """
-            st.markdown(button_html, unsafe_allow_html=True)
-        
-        # Display combined translation in a styled div without scrollbars
-        st.markdown(f"""
-        <div style="
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 16px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-width: 100%;
-            margin-top: -30px;
-        ">
-        {combined_text}
-        </div>
-        """, unsafe_allow_html=True)
+        # Display combined translation in a markdown code block
+        st.markdown("### Combined Translation:")
+        st.code(combined_text, language=None)
     else:
         st.warning("Please enter some text to translate.")
