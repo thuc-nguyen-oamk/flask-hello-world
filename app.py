@@ -30,7 +30,7 @@ st.title("🌍 Chinese to Vietnamese Multi-Model Translator")
 
 # Wrap the input and button in a form to enable Enter key submission
 with st.form(key="translation_form"):
-    chinese_text = st.text_input("Enter Chinese text to translate:", "你好，世界")
+    chinese_text = st.text_input("Enter Chinese text to translate:", "")
     submit_button = st.form_submit_button(label="Translate")
 
 if submit_button:
