@@ -66,16 +66,19 @@ if st.button("Translate"):
             st.markdown("### Combined Translation:")
         with col2:
             st.code(combined_text)  # Hidden code block for copying
-            st.markdown(f"""
+            # Create escaped version for JavaScript
+            js_escaped_text = combined_text.replace('`', '\\`').replace('$', '\\$')
+            button_html = f"""
             <div style="position: relative; top: -40px; text-align: right;">
-                <button title="Copy to clipboard" onclick="navigator.clipboard.writeText(`{combined_text.replace(chr(10), '\\n')}`)" style="
+                <button title="Copy to clipboard" onclick="navigator.clipboard.writeText(`{js_escaped_text}`)" style="
                     background: none;
                     border: none;
                     cursor: pointer;
                     font-size: 18px;
                 ">📋</button>
             </div>
-            """, unsafe_allow_html=True)
+            """
+            st.markdown(button_html, unsafe_allow_html=True)
         
         # Display combined translation in a styled div without scrollbars
         st.markdown(f"""
