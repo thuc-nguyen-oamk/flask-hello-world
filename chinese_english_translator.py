@@ -1,5 +1,6 @@
 # chinese_english_translator.py
 import requests
+import re
 from deep_translator import GoogleTranslator
 
 def unwrap_text(text):
