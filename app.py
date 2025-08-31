@@ -3,6 +3,8 @@ import streamlit as st
 from translator import TranslatorManager
 # Import the new Han-Viet translator
 from dich_han_viet import Translator as HanVietTranslator
+# Import the Chinese-English translator
+from chinese_english_translator import translate_text
 
 # List of Hugging Face models you want to use
 MODEL_NAMES = [
@@ -35,6 +37,12 @@ if st.button("Translate"):
             
             # Get Han-Viet transliteration
             hanviet_result = hanviet_translator.translate_locally_hanviet(chinese_text)
+            
+            # Get English translation
+            english_result = translate_text(chinese_text, 'en')
+            
+            # Capitalize first letter of Han-Viet result
+            hanviet_capitalized = hanviet_result.capitalize() if hanviet_result else ""
         
         # Display AI model translations
         for model_name, translation in results.items():
@@ -42,5 +50,15 @@ if st.button("Translate"):
         
         # Display Han-Viet transliteration
         st.markdown(f"**Han-Viet Transliteration:** {hanviet_result}")
+        
+        # Create combined translation text
+        vietnamese_translations = list(results.values())
+        combined_text = f"""{chinese_text}
+{english_result}
+{hanviet_capitalized}
+{"\n".join(vietnamese_translations[:2])}"""
+        
+        # Display combined translation in a text area for easy copying
+        st.text_area("Combined Translation (for copying):", combined_text, height=150)
     else:
         st.warning("Please enter some text to translate.")
