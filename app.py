@@ -27,9 +27,13 @@ def load_hanviet_translator():
 hanviet_translator = load_hanviet_translator()
 
 st.title("🌍 Chinese to Vietnamese Multi-Model Translator")
-chinese_text = st.text_input("Enter Chinese text to translate:", "你好，世界")
 
-if st.button("Translate"):
+# Wrap the input and button in a form to enable Enter key submission
+with st.form(key="translation_form"):
+    chinese_text = st.text_input("Enter Chinese text to translate:", "你好，世界")
+    submit_button = st.form_submit_button(label="Translate")
+
+if submit_button:
     if chinese_text.strip():
         with st.spinner("Translating with all models..."):
             # Get AI model translations
