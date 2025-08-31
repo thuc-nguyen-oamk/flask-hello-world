@@ -59,8 +59,22 @@ if st.button("Translate"):
 {hanviet_capitalized}
 {newline.join(vietnamese_translations[:2])}"""
         
-        # Display combined translation in a markdown code block without scrollbars
+        # Display combined translation in a styled div without scrollbars
         st.markdown("### Combined Translation:")
-        st.markdown(f"```\n{combined_text}\n```")
+        st.markdown(f"""
+        <div style="
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 16px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 100%;
+            overflow: auto;
+        ">
+        {combined_text}
+        </div>
+        """, unsafe_allow_html=True)
     else:
         st.warning("Please enter some text to translate.")
