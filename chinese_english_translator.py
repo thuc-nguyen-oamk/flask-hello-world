@@ -2,6 +2,42 @@
 import requests
 from deep_translator import GoogleTranslator
 
+def unwrap_text(text):
+    # Define all possible brackets treated as standalone prefix or suffix
+    brackets = ['(', ')', '[', ']', '{', '}', '<', '>', 
+                '《', '》', '“', '”', '‘', '’', '"', '"', 
+                "'", "'", "「", "」", "【", "】", "『", "』"]
+
+    # Normalize and trim input
+    text = text.strip()
+
+    prefix_bracket = ''
+    suffix_bracket = ''
+
+    # Check for prefix bracket
+    for b in brackets:
+        if text.startswith(b):
+            prefix_bracket = b
+            break
+
+    # Check for suffix bracket
+    for b in brackets:
+        if text.endswith(b):
+            suffix_bracket = b
+            break
+
+    # Extract inner text based on detected brackets
+    inner_start = len(prefix_bracket)
+    inner_end = -len(suffix_bracket) if suffix_bracket else None
+
+    if inner_end is not None:
+        inner_text = text[inner_start:inner_end]
+    else:
+        inner_text = text[inner_start:]
+
+    # Strip inner text before return
+    return prefix_bracket, inner_text.strip(), suffix_bracket
+
 # Translation helper
 def translate_text(text, target_lang):
     # print('⚠️ translate_text is temporarily OFF.')
