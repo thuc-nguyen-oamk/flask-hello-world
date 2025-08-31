@@ -6,3 +6,4 @@ sentencepiece
 sacremoses
 fastapi
 uvicorn
+jieba
