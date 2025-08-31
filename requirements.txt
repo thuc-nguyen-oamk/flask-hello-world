@@ -7,3 +7,4 @@ sacremoses
 fastapi
 uvicorn
 jieba
+deep_translator
