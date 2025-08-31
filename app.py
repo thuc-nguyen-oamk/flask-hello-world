@@ -59,8 +59,8 @@ if st.button("Translate"):
 {hanviet_capitalized}
 {newline.join(vietnamese_translations[:2])}"""
         
-        # Display combined translation in a markdown code block
+        # Display combined translation in a markdown code block without scrollbars
         st.markdown("### Combined Translation:")
-        st.code(combined_text, language=None)
+        st.markdown(f"```\n{combined_text}\n```")
     else:
         st.warning("Please enter some text to translate.")
