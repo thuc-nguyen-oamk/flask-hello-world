@@ -22,7 +22,8 @@ import torch
 class Translator:
     def __init__(self, hf_model_name=None):
         # Constants for dictionary/rule file paths
-        self.BASE_DIR = r"E:\z\vietphrase_tu_dien_cua_no"
+        # Nếu deploy thì sửa lại BASE_DIR
+        self.BASE_DIR = os.getcwd()
         self.PHIENAM_FILE = os.path.join(self.BASE_DIR, "PhienAm.txt")
         self.VIETPHRASE_FILE = os.path.join(self.BASE_DIR, "VietPhrase.txt")
         self.NAMES_FILE = os.path.join(self.BASE_DIR, "Names.txt")
