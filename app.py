@@ -61,7 +61,7 @@ if submit_button:
         combined_text = f"""{chinese_text}
 {english_result}
 {hanviet_capitalized}
-{newline.join(vietnamese_translations[:2])}"""
+{newline.join(vietnamese_translations[:1])}"""  # Helsinki translation is temporarily ignored in the combination
         
         # Display combined translation in a markdown code block
         st.markdown("### Combined Translation:")
